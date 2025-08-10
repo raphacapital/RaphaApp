@@ -1,0 +1,68 @@
+---
+description: |
+  Coding Guidelines and Best Practices for Building the App
+
+  1. Technology Stack & Deployment
+  - Use React Native exclusively for all frontend/mobile app development.
+  - The app will be built and tested via Expo Go during development to enable fast iteration and debugging.
+  - For staging, testing, and production builds, use Expo Application Services (EAS) Build to generate standalone builds.
+  - Deploy builds through TestFlight for iOS beta testing before launching publicly on the Apple App Store.
+  - Ensure all code is compatible with the Expo managed workflow and EAS build pipeline.
+
+
+ 
+  - Follow best practices for React Native development: clean separation of concerns, consistent styling conventions, and avoidance of deprecated APIs.
+  - Use TypeScript if applicable or ensure strong typing through PropTypes or similar.
+  - Handle all edge cases gracefully and prevent app crashes.
+  - Write clean, well-documented, and readable code with meaningful variable/function names.
+  - Include error handling and logging where relevant.
+
+  3. Scalability & Modularity
+  - Design components and modules to be modular, reusable, and composable.
+  - Avoid static or hard-coded values; rely on configuration and props to keep things dynamic.
+  - Separate UI, business logic, and data handling clearly. Use hooks, context, or state management libraries appropriately to keep code scalable.
+  - Structure folders and files logically to facilitate maintainability and scalability.
+  - Avoid code duplication; prefer DRY (Don’t Repeat Yourself) principles.
+  - Think long term: design APIs, components, and features so they can be extended without large rewrites.
+
+  4. Simplicity & Minimalism
+  - Prefer the simplest, most straightforward solution to fulfill requirements.
+  - Avoid unnecessary abstractions, over-engineering, or complex patterns unless absolutely justified.
+  - Write concise code that does exactly what’s needed — no more, no less.
+  - Use native React Native capabilities and popular, well-maintained libraries rather than building from scratch, but keep dependencies minimal.
+
+  5. Communication and Clarification
+  - If any requirement, spec, or behavior is unclear, ambiguous, or incomplete, do not proceed with coding. Instead, ask precise clarifying questions.
+  - If you need access to additional documentation, APIs, or resources, explicitly request them before proceeding.
+  - Only implement exactly what is asked. Do not add any extra features, embellishments, or assumptions beyond the stated requirements.
+
+  6. Testing & Validation
+  - Test all features thoroughly in Expo Go during development for quick iteration.
+  - For builds, generate EAS builds and distribute via TestFlight for beta testing on real devices.
+  - Include basic testing wherever possible (unit tests, snapshot tests, or integration tests), especially for critical logic.
+  - Ensure that components work well on multiple device sizes and orientations.
+  - Follow accessibility best practices to the extent possible.
+  - Validate inputs and outputs rigorously.
+
+  7. Performance Considerations
+  - Optimize rendering and state management to avoid unnecessary re-renders.
+  - Use lazy loading or code splitting if appropriate.
+  - Keep app bundle size minimal.
+  - Profile and monitor performance bottlenecks if detected.
+
+  8. Version Control and Commit Practices
+  - Write code with clean commits if applicable.
+  - Use descriptive commit messages aligned with best practices (if applicable).
+
+  9. Security & Privacy
+  - Never hardcode secrets or sensitive data in code.
+  - Follow secure storage and data handling practices.
+  - Sanitize all inputs, especially if communicating with backend APIs.
+
+  10. Documentation
+  - Document components, functions, and modules clearly using comments or README files when necessary.
+  - Provide usage examples for reusable components.
+
+globs:
+alwaysApply: false
+---

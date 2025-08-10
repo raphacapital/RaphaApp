@@ -1,0 +1,75 @@
+
+Rapha AI Bible Devotion App — General MVP Guidelines
+
+1. User Onboarding & Profiling
+- Build a comprehensive onboarding experience that collects essential user information to personalize devotions:
+  • Spiritual background and faith experience
+  • Current life challenges and prayer needs
+  • Preferred devotional topics or themes
+  • Bible translation preferences (if applicable)
+- Design onboarding to educate and engage users, preparing them for deeper app value
+- End onboarding with a clear, non-bypassable subscription paywall, including a free trial option
+
+2. Core Daily Experience
+- Deliver a personalized daily devotional that includes:
+  • Scripture passage relevant to the user’s profile and daily context
+  • Reflective content connecting Scripture to the user’s life situation
+  • A guided prayer or meditative prompt related to the reflection
+  • An actionable challenge or thought for the day to encourage application
+- Provide a daily mechanism for users to update their emotional state or life context to inform devotion personalization
+
+3. Reflection & Prayer Tools
+- Provide an easy-to-access space where users can:
+  • Record personal prayers or prayer requests
+  • Track answered prayers and spiritual milestones
+  • Journal reflections and insights tied to daily devotionals or freeform entries
+- Support privacy and optionally social sharing, enabling users to connect without pressure
+
+4. Community Engagement
+- Facilitate a safe and moderated environment where users can:
+  • Share prayer requests and offer support
+  • Discuss devotion content and related topics
+  • Engage in group or topic-specific conversations, fostering a sense of belonging
+- Design community features to encourage encouragement, accountability, and user retention
+
+5. Scripture Access
+- Provide easy access to the Bible text with flexible options for:
+  • Browsing or searching Scripture passages
+  • Switching among commonly used translations
+  • Bookmarking or saving favorite verses for later reflection
+- Consider future integration of AI-assisted Scripture search or topic exploration
+
+6. User Account & Subscription Management
+- Enable secure user registration and login (email and/or social options)
+- Store user data securely, including profile, devotional history, journal entries, and prayers
+- Manage subscription lifecycle, including trial periods, renewals, and cancellations
+- Ensure smooth onboarding-to-paid conversion flow with transparency on benefits
+
+7. Habit Formation & Engagement Mechanics
+- Use reminders or notifications to encourage consistent daily app use
+- Provide visual or motivational feedback on user progress, such as streaks or milestones
+- Incorporate features that nudge users to reflect, pray, or engage with community regularly
+- Design UI/UX that is clean, inviting, and easy to navigate to reduce friction and increase retention
+
+8. Navigation & Information Architecture
+- Structure app navigation around primary user goals:
+  • Access to daily devotionals
+  • Reflection/prayer/journaling tools
+  • Community interaction
+  • Scripture reading
+- Use a minimal, intuitive navigation system prioritizing frequent actions and minimizing cognitive load
+- Place less frequently used settings and profile management in a secondary menu or accessible from a non-primary area
+
+9. Data Analytics & Moderation (Basic MVP)
+- Implement backend analytics to track key metrics such as daily active users, retention rates, and subscription conversions
+- Include moderation capabilities for community content to ensure a respectful and supportive environment
+- Use analytics feedback to iteratively improve content personalization and user experience
+
+10. Technical & Platform Considerations
+- Design mobile-first, optimizing for smooth performance and accessibility on a range of devices
+- Build backend AI services capable of dynamically generating or tailoring devotional content based on evolving user data
+- Architect data storage with privacy and security best practices in mind
+- Ensure the platform is built with future scalability and localization in mind
+
+Summary
+This MVP guideline focuses on delivering a personalized, habit-forming daily devotional experience that integrates prayer, reflection, community, and Scripture access. The foundation is to collect meaningful user data early, use AI to serve deeply relevant spiritual content, support users emotionally and socially, and encourage consistent engagement—all within a clean, accessible mobile-first design.
