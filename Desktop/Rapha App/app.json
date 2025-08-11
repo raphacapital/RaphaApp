@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Rapha",
+    "slug": "rapha-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./src/assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0A22"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "fonts": [
+      "./src/components/fonts/NeueHaasDisplayRoman.ttf",
+      "./src/components/fonts/NeueHaasDisplayMediu.ttf",
+      "./src/components/fonts/NeueHaasDisplayBold.ttf",
+      "./src/components/fonts/NeueHaasDisplayLight.ttf",
+      "./src/components/fonts/NeueHaasDisplayThin.ttf"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.raphalabs.rapha"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#0A0A22"
+      },
+      "package": "com.raphalabs.rapha"
+    },
+    "web": {
+      "favicon": "./src/assets/favicon.png"
+    },
+    "scheme": "rapha-app",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-apple-authentication",
+        {
+          "services": ["signin"]
+        }
+      ]
+    ]
+  }
+}
