@@ -172,25 +172,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           
           // No local profile found, try to fetch from Supabase
           console.log('🔍 AuthContext: No local profile found, fetching from Supabase...');
-          const { profile, error } = await AuthService.getUserProfile(session.user.id);
-          
-          if (profile && !error) {
-            console.log('✅ AuthContext: Profile fetched from Supabase, storing locally');
-            const appProfile = convertDatabaseProfileToAppProfile(profile, {
-              hasCompletedOnboarding: false, // Default, will be updated from local storage
-              hasPaidThroughSuperwall: false,
-            });
-            // Update email from auth user
-            appProfile.email = session.user.email!;
+          try {
+            const { profile, error } = await AuthService.getUserProfile(session.user.id);
             
-            setUser(appProfile);
-            // Persist to local storage with current flow state
-            await persistUserData(appProfile, {
-              hasCompletedOnboarding: false,
-              hasPaidThroughSuperwall: false,
-            });
-          } else {
-            console.log('⚠️ AuthContext: No profile found in Supabase, creating default user');
+            if (profile && !error) {
+              console.log('✅ AuthContext: Profile fetched from Supabase, storing locally');
+              const appProfile = convertDatabaseProfileToAppProfile(profile, {
+                hasCompletedOnboarding: false, // Default, will be updated from local storage
+                hasPaidThroughSuperwall: false,
+              });
+              // Update email from auth user
+              appProfile.email = session.user.email!;
+              
+              setUser(appProfile);
+              // Persist to local storage with current flow state
+              await persistUserData(appProfile, {
+                hasCompletedOnboarding: false,
+                hasPaidThroughSuperwall: false,
+              });
+            } else {
+              console.log('⚠️ AuthContext: No profile found in Supabase, creating default user');
+              const defaultUser = createAppProfileFromAuthUser({
+                id: session.user.id,
+                email: session.user.email!,
+                created_at: session.user.created_at,
+                updated_at: session.user.updated_at!,
+              }, {
+                hasCompletedOnboarding: false,
+                hasPaidThroughSuperwall: false,
+              });
+              setUser(defaultUser);
+              // Don't persist default user yet - wait for onboarding completion
+            }
+          } catch (fetchError) {
+            console.error('❌ AuthContext: Error fetching profile from Supabase:', fetchError);
+            console.log('⚠️ AuthContext: Creating default user due to fetch error');
             const defaultUser = createAppProfileFromAuthUser({
               id: session.user.id,
               email: session.user.email!,
@@ -237,25 +253,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           
           // No local data, fetch from Supabase
           console.log('🔍 AuthContext: Fetching profile from Supabase on startup...');
-          const { profile, error } = await AuthService.getUserProfile(session.user.id);
-          
-          if (profile && !error) {
-            console.log('✅ AuthContext: Profile loaded from Supabase on startup');
-            const appProfile = convertDatabaseProfileToAppProfile(profile, {
-              hasCompletedOnboarding: false,
-              hasPaidThroughSuperwall: false,
-            });
-            // Update email from auth user
-            appProfile.email = session.user.email!;
+          try {
+            const { profile, error } = await AuthService.getUserProfile(session.user.id);
             
-            setUser(appProfile);
-            // Persist to local storage with current flow state
-            await persistUserData(appProfile, {
-              hasCompletedOnboarding: false,
-              hasPaidThroughSuperwall: false,
-            });
-          } else {
-            console.log('⚠️ AuthContext: No profile found, creating default user');
+            if (profile && !error) {
+              console.log('✅ AuthContext: Profile loaded from Supabase on startup');
+              const appProfile = convertDatabaseProfileToAppProfile(profile, {
+                hasCompletedOnboarding: false,
+                hasPaidThroughSuperwall: false,
+              });
+              // Update email from auth user
+              appProfile.email = session.user.email!;
+              
+              setUser(appProfile);
+              // Persist to local storage with current flow state
+              await persistUserData(appProfile, {
+                hasCompletedOnboarding: false,
+                hasPaidThroughSuperwall: false,
+              });
+            } else {
+              console.log('⚠️ AuthContext: No profile found, creating default user');
+              const defaultUser = createAppProfileFromAuthUser({
+                id: session.user.id,
+                email: session.user.email!,
+                created_at: session.user.created_at,
+                updated_at: session.user.updated_at!,
+              }, {
+                hasCompletedOnboarding: false,
+                hasPaidThroughSuperwall: false,
+              });
+              setUser(defaultUser);
+            }
+          } catch (fetchError) {
+            console.error('❌ AuthContext: Error fetching profile from Supabase on startup:', fetchError);
+            console.log('⚠️ AuthContext: Creating default user due to fetch error');
             const defaultUser = createAppProfileFromAuthUser({
               id: session.user.id,
               email: session.user.email!,

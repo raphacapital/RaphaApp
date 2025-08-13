@@ -373,10 +373,17 @@ export class AuthService {
    */
   static async getUserProfile(userId: string): Promise<{ profile: UserProfile | null; error: string | null }> {
     try {
-      const { data, error } = await supabase
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise<{ profile: UserProfile | null; error: string | null }>((_, reject) => {
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 5000); // 5 second timeout
+      });
+
+      const fetchPromise = supabase
         .from('user_profiles')
         .select('*')
         .eq('user_id', userId);
+
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
 
       if (error) {
         console.error('Error fetching user profile:', error);
