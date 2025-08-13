@@ -3,7 +3,6 @@
  */
 export interface UserFlowState {
   hasCompletedOnboarding: boolean;
-  hasPaidThroughSuperwall: boolean;
 }
 
 /**

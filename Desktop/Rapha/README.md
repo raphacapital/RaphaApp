@@ -35,7 +35,7 @@ src/
 │   └── ThemeContext.tsx  # Theme context provider
 ├── utils/
 │   └── fontLoader.ts     # Font loading utility
-└── components/fonts/     # Custom font files
+└── assets/fonts/         # Custom font files
 ```
 
 ### 4. Updated Components

@@ -18,7 +18,6 @@ interface AuthContextType {
   setUser: (user: UserProfile | null) => void;
   updateUserFlowState: (updates: Partial<UserFlowState>) => void;
   markOnboardingComplete: () => void;
-  markPaymentComplete: () => void;
   resetFlowStates: () => void;
   forceClearAuth: () => Promise<void>;
 }
@@ -52,7 +51,6 @@ const convertDatabaseProfileToAppProfile = (
     created_at: dbProfile.created_at || new Date().toISOString(),
     updated_at: dbProfile.updated_at || new Date().toISOString(),
     hasCompletedOnboarding: flowState.hasCompletedOnboarding,
-    hasPaidThroughSuperwall: flowState.hasPaidThroughSuperwall,
     // Map all onboarding fields
     full_name: dbProfile.full_name,
     gender: dbProfile.gender,
@@ -85,7 +83,6 @@ const createAppProfileFromAuthUser = (
     created_at: authUser.created_at,
     updated_at: authUser.updated_at,
     hasCompletedOnboarding: flowState.hasCompletedOnboarding,
-    hasPaidThroughSuperwall: flowState.hasPaidThroughSuperwall,
     // Initialize onboarding fields as undefined for new users
     full_name: undefined,
     gender: undefined,
@@ -114,7 +111,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userFlowState, setUserFlowState] = useState<UserFlowState>({
     hasCompletedOnboarding: false,
-    hasPaidThroughSuperwall: false,
   });
 
   // Debug: Monitor user state changes
@@ -211,7 +207,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               console.log('✅ AuthContext: Profile fetched from Supabase, storing locally');
               const appProfile = convertDatabaseProfileToAppProfile(profile, {
                 hasCompletedOnboarding: false, // Default, will be updated from local storage
-                hasPaidThroughSuperwall: false,
               });
               // Update email from auth user
               appProfile.email = session.user.email!;
@@ -220,7 +215,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               // Persist to local storage with current flow state
               await persistUserData(appProfile, {
                 hasCompletedOnboarding: false,
-                hasPaidThroughSuperwall: false,
               });
             } else {
               console.log('⚠️ AuthContext: No profile found in Supabase, creating default user');
@@ -442,12 +436,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     updateUserFlowState({ hasCompletedOnboarding: true });
   };
 
-  /**
-   * Mark payment as complete
-   */
-  const markPaymentComplete = () => {
-    updateUserFlowState({ hasPaidThroughSuperwall: true });
-  };
+
 
   /**
    * Reset all flow states (for testing purposes)
@@ -499,7 +488,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser,
     updateUserFlowState,
     markOnboardingComplete,
-    markPaymentComplete,
     resetFlowStates,
     forceClearAuth,
   };

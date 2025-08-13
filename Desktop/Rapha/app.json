@@ -15,11 +15,11 @@
       "**/*"
     ],
     "fonts": [
-      "./components/fonts/NeueHaasDisplayRoman.ttf",
-      "./components/fonts/NeueHaasDisplayMediu.ttf",
-      "./components/fonts/NeueHaasDisplayBold.ttf",
-      "./components/fonts/NeueHaasDisplayLight.ttf",
-      "./components/fonts/NeueHaasDisplayThin.ttf"
+      "./assets/fonts/NeueHaasDisplayRoman.ttf",
+      "./assets/fonts/NeueHaasDisplayMediu.ttf",
+      "./assets/fonts/NeueHaasDisplayBold.ttf",
+      "./assets/fonts/NeueHaasDisplayLight.ttf",
+      "./assets/fonts/NeueHaasDisplayThin.ttf"
     ],
     "ios": {
       "supportsTablet": true,
