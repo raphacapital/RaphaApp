@@ -11,9 +11,9 @@ import CTAButton from './CTAButton';
  */
 interface AuthScreenProps {
   /**
-   * Onboarding data collected from the user
+   * Onboarding data collected from the user (optional for sign in flow)
    */
-  onboardingData: Partial<UserProfile>;
+  onboardingData?: Partial<UserProfile>;
   
   /**
    * Callback when authentication is successful
@@ -79,15 +79,17 @@ const AuthScreen: React.FC<AuthScreenProps> = ({
       if (result.error) {
         onAuthError(result.error);
       } else if (result.success) {
-        // Mark onboarding as complete after successful authentication
-        markOnboardingComplete();
-        
-        // Get the user from the auth context
-        onAuthSuccess({ success: true });
-        
-        // After successful sign in, navigate to root to trigger FlowRouter
-        // The FlowRouter will determine the next step based on completion status
-        router.replace('/');
+        if (result.isNewUser) {
+          // New user - redirect to onboarding
+          console.log('🆕 AuthScreen: New user detected, redirecting to onboarding');
+          router.replace('/onboarding/onboarding1');
+        } else {
+          // Existing user - mark onboarding complete and go to dashboard
+          console.log('👤 AuthScreen: Existing user, marking onboarding complete');
+          markOnboardingComplete();
+          onAuthSuccess({ success: true });
+          router.replace('/');
+        }
       }
     } catch (error: any) {
       console.error('Apple Sign In error:', error);

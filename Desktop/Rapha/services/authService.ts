@@ -12,8 +12,8 @@ export class AuthService {
    * @returns Promise with user data or error
    */
   static async signInWithApple(
-    onboardingData: Partial<UserProfile>
-  ): Promise<{ user: AuthUser | null; error: string | null }> {
+    onboardingData?: Partial<UserProfile>
+  ): Promise<{ user: AuthUser | null; error: string | null; isNewUser?: boolean }> {
     try {
       // Check if Apple Sign In is available
       const isAvailable = await AppleAuthentication.isAvailableAsync();
@@ -96,7 +96,7 @@ export class AuthService {
           updated_at: existingUser.user.updated_at!,
         };
 
-        return { user, error: null };
+        return { user, error: null, isNewUser: false };
       }
 
       return { user: null, error: 'Failed to authenticate with Apple' };
@@ -119,7 +119,7 @@ export class AuthService {
     onboardingData: Partial<UserProfile>,
     email: string,
     fullName: string
-  ): Promise<{ user: AuthUser | null; error: string | null }> {
+  ): Promise<{ user: AuthUser | null; error: string | null; isNewUser?: boolean }> {
     try {
       console.log('Creating new Apple user with:', {
         email: email ? '***' + email.substring(email.indexOf('@')) : 'No email',
@@ -183,7 +183,7 @@ export class AuthService {
         updated_at: signUpData.user.updated_at!,
       };
 
-      return { user, error: null };
+      return { user, error: null, isNewUser: true };
 
     } catch (error) {
       console.error('Unexpected error in createNewAppleUser:', error);

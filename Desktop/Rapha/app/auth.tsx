@@ -10,8 +10,11 @@ import { UserProfile } from '../services/supabase';
 export default function AuthRoute() {
   const params = useLocalSearchParams();
   
-  // Extract onboarding data from route params
-  const onboardingData = {
+  // Check if we have onboarding data (coming from onboarding flow) or not (coming from splash screen)
+  const hasOnboardingData = Object.keys(params).length > 0;
+  
+  // Extract onboarding data from route params if available
+  const onboardingData = hasOnboardingData ? {
     gender: params.gender as string,
     birthday: params.birthday as string,
     devotional_experience: params.devotional_experience as string,
@@ -26,7 +29,7 @@ export default function AuthRoute() {
     style_traditional_modern: params.style_traditional_modern ? parseInt(params.style_traditional_modern as string) : undefined,
     preferred_time: params.preferred_time ? JSON.parse(params.preferred_time as string) : undefined,
     additional_notes: params.additional_notes as string,
-  };
+  } : undefined;
 
   const handleAuthSuccess = (user: any) => {
     console.log('🎉 User authenticated successfully:', user);

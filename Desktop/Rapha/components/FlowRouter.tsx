@@ -31,8 +31,15 @@ export default function FlowRouter() {
       return;
     }
 
-    // User is authenticated, take them to dashboard
-    console.log('✅ FlowRouter: User authenticated, going to dashboard');
+    // User is authenticated, check if they need to complete onboarding
+    if (!userFlowState.hasCompletedOnboarding) {
+      console.log('🆕 FlowRouter: User needs to complete onboarding, going to onboarding');
+      router.replace('/onboarding/onboarding1');
+      return;
+    }
+
+    // User is authenticated and has completed onboarding, take them to dashboard
+    console.log('✅ FlowRouter: User authenticated and onboarding complete, going to dashboard');
     router.replace('/dashboard');
   }, [isAuthenticated, user, userFlowState, router]);
 

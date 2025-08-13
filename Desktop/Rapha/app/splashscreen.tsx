@@ -77,19 +77,17 @@ export default function SplashScreen() {
             }}
           />
           
-
-          
-          {/* Sign In Link */}
+          {/* Sign In Button */}
           <TouchableOpacity
-            style={styles.signInContainer}
+            style={[styles.signInButton, { borderColor: colors.textSecondary }]}
             onPress={() => {
-              // Always go to auth screen for sign in
+              // Go to auth screen for sign in
               router.push('/auth');
             }}
             activeOpacity={0.7}
           >
-            <Text style={[styles.signInText, { color: colors.textPrimary }]}>
-              Already have an account? <Text style={[styles.signInBold, { color: colors.textPrimary }]}>Sign In</Text>
+            <Text style={[styles.signInButtonText, { color: colors.textSecondary }]}>
+              Sign In
             </Text>
           </TouchableOpacity>
         </View>
@@ -135,15 +133,17 @@ const styles = StyleSheet.create({
     marginTop: 'auto', // Push button to bottom of content container
     width: '100%',
   },
-  signInContainer: {
-    marginTop: SPACING.sm, // 12px below CTA button
+  signInButton: {
+    marginTop: SPACING.md, // 16px below CTA button
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    borderWidth: 1,
+    borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  signInText: {
-    ...getTypography('text', 'regular'), // 16px font size with regular weight
-  },
-  signInBold: {
-    ...getTypography('text', 'medium'), // medium weight for "Sign In"
+  signInButtonText: {
+    ...getTypography('text', 'medium'), // 16px font size with medium weight
   },
 
 }); 

@@ -13,7 +13,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   userFlowState: UserFlowState;
-  signInWithApple: (onboardingData: any) => Promise<{ success: boolean; error?: string }>;
+  signInWithApple: (onboardingData?: any) => Promise<{ success: boolean; error?: string; isNewUser?: boolean }>;
   signOut: () => Promise<void>;
   setUser: (user: UserProfile | null) => void;
   updateUserFlowState: (updates: Partial<UserFlowState>) => void;
@@ -361,7 +361,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log('✅ AuthContext: Sign in successful, user returned:', result.user);
         // Note: We don't need to call setUser here because the Supabase auth listener
         // will automatically update the state when the auth state changes
-        return { success: true };
+        return { success: true, isNewUser: result.isNewUser };
       }
 
       console.log('❌ AuthContext: No user returned from sign in');
