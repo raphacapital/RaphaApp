@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthService } from '../services/authService';
-import { AuthUser } from '../services/supabase';
+import { AuthUser, UserProfile as DatabaseUserProfile } from '../services/supabase';
 import { supabase } from '../services/supabase';
 import { UserProfile, UserFlowState } from '../types/UserFlowTypes';
 
@@ -17,7 +18,6 @@ interface AuthContextType {
   setUser: (user: UserProfile | null) => void;
   updateUserFlowState: (updates: Partial<UserFlowState>) => void;
   markOnboardingComplete: () => void;
-
   markPaymentComplete: () => void;
   resetFlowStates: () => void;
   forceClearAuth: () => Promise<void>;
@@ -35,9 +35,47 @@ interface AuthProviderProps {
  */
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Storage keys for persisting user data locally
+const USER_PROFILE_KEY = '@rapha_user_profile';
+const FLOW_STATE_KEY = '@rapha_flow_state';
+
+/**
+ * Convert database profile to app profile
+ */
+const convertDatabaseProfileToAppProfile = (
+  dbProfile: DatabaseUserProfile, 
+  flowState: UserFlowState
+): UserProfile => {
+  return {
+    id: dbProfile.user_id || dbProfile.id,
+    email: '', // Will be filled from auth user
+    created_at: dbProfile.created_at || new Date().toISOString(),
+    updated_at: dbProfile.updated_at || new Date().toISOString(),
+    hasCompletedOnboarding: flowState.hasCompletedOnboarding,
+    hasPaidThroughSuperwall: flowState.hasPaidThroughSuperwall,
+  };
+};
+
+/**
+ * Convert auth user to app profile
+ */
+const createAppProfileFromAuthUser = (
+  authUser: AuthUser, 
+  flowState: UserFlowState
+): UserProfile => {
+  return {
+    id: authUser.id,
+    email: authUser.email,
+    created_at: authUser.created_at,
+    updated_at: authUser.updated_at,
+    hasCompletedOnboarding: flowState.hasCompletedOnboarding,
+    hasPaidThroughSuperwall: flowState.hasPaidThroughSuperwall,
+  };
+};
+
 /**
  * Authentication provider component
- * Manages authentication state and provides authentication methods
+ * Manages authentication state with local-first approach
  */
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -55,6 +93,60 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
   }, [user]);
 
+  // Load persisted user data from local storage on startup
+  useEffect(() => {
+    const loadPersistedUserData = async () => {
+      try {
+        console.log('📱 AuthContext: Loading persisted user data from local storage...');
+        
+        // Load user profile
+        const storedProfile = await AsyncStorage.getItem(USER_PROFILE_KEY);
+        const storedFlowState = await AsyncStorage.getItem(FLOW_STATE_KEY);
+        
+        if (storedProfile) {
+          const userProfile = JSON.parse(storedProfile);
+          console.log('📱 AuthContext: Loaded user profile from local storage:', userProfile);
+          setUser(userProfile);
+        }
+        
+        if (storedFlowState) {
+          const flowState = JSON.parse(storedFlowState);
+          console.log('📱 AuthContext: Loaded flow state from local storage:', flowState);
+          setUserFlowState(flowState);
+        }
+        
+        if (!storedProfile && !storedFlowState) {
+          console.log('📱 AuthContext: No persisted user data found');
+        }
+      } catch (error) {
+        console.error('📱 AuthContext: Error loading persisted user data:', error);
+      }
+    };
+
+    loadPersistedUserData();
+  }, []);
+
+  // Function to persist user data locally
+  const persistUserData = async (userProfile: UserProfile, flowState: UserFlowState) => {
+    try {
+      await AsyncStorage.setItem(USER_PROFILE_KEY, JSON.stringify(userProfile));
+      await AsyncStorage.setItem(FLOW_STATE_KEY, JSON.stringify(flowState));
+      console.log('📱 AuthContext: User data persisted locally');
+    } catch (error) {
+      console.error('📱 AuthContext: Error persisting user data:', error);
+    }
+  };
+
+  // Function to clear all local data
+  const clearLocalData = async () => {
+    try {
+      await AsyncStorage.multiRemove([USER_PROFILE_KEY, FLOW_STATE_KEY]);
+      console.log('📱 AuthContext: Local user data cleared');
+    } catch (error) {
+      console.error('📱 AuthContext: Error clearing local data:', error);
+    }
+  };
+
   // Listen to Supabase auth state changes
   useEffect(() => {
     console.log('🔍 AuthContext: Setting up Supabase auth listener...');
@@ -64,23 +156,62 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log('🔄 AuthContext: Supabase auth state changed:', event, session?.user?.id);
         
         if (event === 'SIGNED_IN' && session?.user) {
-          console.log('✅ AuthContext: User signed in via Supabase, updating local state');
-          const authUser: UserProfile = {
-            id: session.user.id,
-            email: session.user.email!,
-            created_at: session.user.created_at,
-            updated_at: session.user.updated_at!,
-            hasCompletedOnboarding: false, // Default to false, will be updated from database
-            hasPaidThroughSuperwall: false,
-          };
-          setUser(authUser);
+          console.log('✅ AuthContext: User signed in via Supabase, checking for existing profile...');
+          
+          // Check if we have a local profile for this user
+          const storedProfile = await AsyncStorage.getItem(USER_PROFILE_KEY);
+          if (storedProfile) {
+            const localProfile = JSON.parse(storedProfile);
+            if (localProfile.id === session.user.id) {
+              console.log('✅ AuthContext: Found matching local profile, using it');
+              setUser(localProfile);
+              // Flow state is already loaded from local storage
+              return;
+            }
+          }
+          
+          // No local profile found, try to fetch from Supabase
+          console.log('🔍 AuthContext: No local profile found, fetching from Supabase...');
+          const { profile, error } = await AuthService.getUserProfile(session.user.id);
+          
+          if (profile && !error) {
+            console.log('✅ AuthContext: Profile fetched from Supabase, storing locally');
+            const appProfile = convertDatabaseProfileToAppProfile(profile, {
+              hasCompletedOnboarding: false, // Default, will be updated from local storage
+              hasPaidThroughSuperwall: false,
+            });
+            // Update email from auth user
+            appProfile.email = session.user.email!;
+            
+            setUser(appProfile);
+            // Persist to local storage with current flow state
+            await persistUserData(appProfile, {
+              hasCompletedOnboarding: false,
+              hasPaidThroughSuperwall: false,
+            });
+          } else {
+            console.log('⚠️ AuthContext: No profile found in Supabase, creating default user');
+            const defaultUser = createAppProfileFromAuthUser({
+              id: session.user.id,
+              email: session.user.email!,
+              created_at: session.user.created_at,
+              updated_at: session.user.updated_at!,
+            }, {
+              hasCompletedOnboarding: false,
+              hasPaidThroughSuperwall: false,
+            });
+            setUser(defaultUser);
+            // Don't persist default user yet - wait for onboarding completion
+          }
+        } else if (event === 'SIGNED_OUT') {
+          console.log('❌ AuthContext: User signed out via Supabase, clearing local state');
+          setUser(null);
           setUserFlowState({
             hasCompletedOnboarding: false,
             hasPaidThroughSuperwall: false,
           });
-        } else if (event === 'SIGNED_OUT') {
-          console.log('❌ AuthContext: User signed out via Supabase, clearing local state');
-          setUser(null);
+          // Clear all local data
+          await clearLocalData();
         }
       }
     );
@@ -91,19 +222,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
           console.log('🔍 AuthContext: Found existing session on startup');
-          const authUser: UserProfile = {
-            id: session.user.id,
-            email: session.user.email!,
-            created_at: session.user.created_at,
-            updated_at: session.user.updated_at!,
-            hasCompletedOnboarding: false, // Default to false, will be updated from database
-            hasPaidThroughSuperwall: false,
-          };
-          setUser(authUser);
-          setUserFlowState({
-            hasCompletedOnboarding: false,
-            hasPaidThroughSuperwall: false,
-          });
+          
+          // Check if we have local data for this user
+          const storedProfile = await AsyncStorage.getItem(USER_PROFILE_KEY);
+          if (storedProfile) {
+            const localProfile = JSON.parse(storedProfile);
+            if (localProfile.id === session.user.id) {
+              console.log('✅ AuthContext: Using existing local profile data');
+              setUser(localProfile);
+              // Flow state is already loaded from local storage
+              return;
+            }
+          }
+          
+          // No local data, fetch from Supabase
+          console.log('🔍 AuthContext: Fetching profile from Supabase on startup...');
+          const { profile, error } = await AuthService.getUserProfile(session.user.id);
+          
+          if (profile && !error) {
+            console.log('✅ AuthContext: Profile loaded from Supabase on startup');
+            const appProfile = convertDatabaseProfileToAppProfile(profile, {
+              hasCompletedOnboarding: false,
+              hasPaidThroughSuperwall: false,
+            });
+            // Update email from auth user
+            appProfile.email = session.user.email!;
+            
+            setUser(appProfile);
+            // Persist to local storage with current flow state
+            await persistUserData(appProfile, {
+              hasCompletedOnboarding: false,
+              hasPaidThroughSuperwall: false,
+            });
+          } else {
+            console.log('⚠️ AuthContext: No profile found, creating default user');
+            const defaultUser = createAppProfileFromAuthUser({
+              id: session.user.id,
+              email: session.user.email!,
+              created_at: session.user.created_at,
+              updated_at: session.user.updated_at!,
+            }, {
+              hasCompletedOnboarding: false,
+              hasPaidThroughSuperwall: false,
+            });
+            setUser(defaultUser);
+          }
         } else {
           console.log('🔍 AuthContext: No existing session found on startup');
         }
@@ -168,6 +331,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           hasCompletedOnboarding: false,
           hasPaidThroughSuperwall: false,
         });
+        // Clear all local data
+        await clearLocalData();
       } else {
         console.error('Sign out error:', result.error);
       }
@@ -179,13 +344,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   /**
-   * Update user flow state
+   * Update user flow state locally and sync to Supabase
    */
-  const updateUserFlowState = (updates: Partial<UserFlowState>) => {
+  const updateUserFlowState = async (updates: Partial<UserFlowState>) => {
     console.log('🔄 AuthContext: Updating user flow state:', updates);
+    
+    // Update local state immediately
     setUserFlowState(prev => {
       const newState = { ...prev, ...updates };
       console.log('🔄 AuthContext: New flow state:', newState);
+      
+      // Persist to local storage
+      if (user) {
+        const updatedUser = { ...user, ...newState };
+        persistUserData(updatedUser, newState);
+        
+        // Sync to Supabase in background
+        if (user.id) {
+          AuthService.updateUserProfile(user.id, updatedUser).catch(error => {
+            console.error('❌ AuthContext: Failed to sync to Supabase:', error);
+          });
+        }
+      }
+      
       return newState;
     });
   };
@@ -197,8 +378,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log('🎯 AuthContext: Marking onboarding as complete');
     updateUserFlowState({ hasCompletedOnboarding: true });
   };
-
-
 
   /**
    * Mark payment as complete
@@ -215,6 +394,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       hasCompletedOnboarding: false,
       hasPaidThroughSuperwall: false,
     });
+    // Clear local data
+    clearLocalData();
+    console.log('📱 AuthContext: Flow states reset and local data cleared');
   };
 
   /**
@@ -235,6 +417,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         hasPaidThroughSuperwall: false,
       });
       
+      // Clear all local data
+      await clearLocalData();
+      
       console.log('🧹 AuthContext: Authentication state cleared successfully');
     } catch (error) {
       console.error('🧹 AuthContext: Error clearing auth state:', error);
@@ -251,7 +436,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser,
     updateUserFlowState,
     markOnboardingComplete,
-
     markPaymentComplete,
     resetFlowStates,
     forceClearAuth,
