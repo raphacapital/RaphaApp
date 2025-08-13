@@ -1,11 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getColors, SPACING, getTypography } from '../constants/theme';
 import { supabase } from '../services/supabase';
+
+// Constants for data labels to improve maintainability
+const ONBOARDING_LABELS = {
+  FULL_NAME: 'Full Name',
+  GENDER: 'Gender',
+  BIRTHDAY: 'Birthday',
+  DEVOTIONAL_EXPERIENCE: 'Devotional Experience',
+  SPIRITUAL_JOURNEY: 'Spiritual Journey',
+  LIFE_CHALLENGES: 'Life Challenges',
+  CURRENT_EMOTIONAL_STATE: 'Current Emotional State',
+  PREFERRED_THEMES: 'Preferred Themes',
+  DEVOTIONAL_GOALS: 'Devotional Goals',
+  STYLE_REVERENT_CONVERSATIONAL: 'Style: Reverent vs Conversational',
+  STYLE_COMFORTING_CHALLENGING: 'Style: Comforting vs Challenging',
+  STYLE_POETIC_PRACTICAL: 'Style: Poetic vs Practical',
+  STYLE_TRADITIONAL_MODERN: 'Style: Traditional vs Modern',
+  PREFERRED_TIME: 'Preferred Time',
+  ADDITIONAL_NOTES: 'Additional Notes',
+} as const;
 
 /**
  * Dashboard Screen - Main app screen after authentication
@@ -56,44 +75,42 @@ export default function DashboardScreen() {
       }
     };
 
-    fetchUserData();
+    // Add timeout to prevent hanging
+    const timeoutId = setTimeout(fetchUserData, 100);
+    return () => clearTimeout(timeoutId);
   }, [user?.id]);
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     try {
       await signOut();
       router.replace('/splashscreen');
     } catch (error) {
       console.error('Error signing out:', error);
     }
-  };
+  }, [signOut, router]);
 
-  // Helper function to format onboarding data
-  const formatOnboardingData = () => {
+  // Memoized onboarding data to prevent unnecessary recalculations
+  const onboardingData = useMemo(() => {
     if (!user) return null;
 
-    const data = [
-      { label: 'Full Name', value: user.full_name || 'Not provided' },
-      { label: 'Gender', value: user.gender || 'Not provided' },
-      { label: 'Birthday', value: user.birthday || 'Not provided' },
-      { label: 'Devotional Experience', value: user.devotional_experience || 'Not provided' },
-      { label: 'Spiritual Journey', value: user.spiritual_journey || 'Not provided' },
-      { label: 'Life Challenges', value: user.life_challenges?.join(', ') || 'Not provided' },
-      { label: 'Current Emotional State', value: user.current_emotional_state || 'Not provided' },
-      { label: 'Preferred Themes', value: user.preferred_themes?.join(', ') || 'Not provided' },
-      { label: 'Devotional Goals', value: user.devotional_goals?.join(', ') || 'Not provided' },
-      { label: 'Style: Reverent vs Conversational', value: user.style_reverent_conversational ? `${user.style_reverent_conversational}/10` : 'Not provided' },
-      { label: 'Style: Comforting vs Challenging', value: user.style_comforting_challenging ? `${user.style_comforting_challenging}/10` : 'Not provided' },
-      { label: 'Style: Poetic vs Practical', value: user.style_poetic_practical ? `${user.style_poetic_practical}/10` : 'Not provided' },
-      { label: 'Style: Traditional vs Modern', value: user.style_traditional_modern ? `${user.style_traditional_modern}/10` : 'Not provided' },
-      { label: 'Preferred Time', value: user.preferred_time || 'Not provided' },
-      { label: 'Additional Notes', value: user.additional_notes || 'Not provided' },
+    return [
+      { label: ONBOARDING_LABELS.FULL_NAME, value: user.full_name || 'Not provided' },
+      { label: ONBOARDING_LABELS.GENDER, value: user.gender || 'Not provided' },
+      { label: ONBOARDING_LABELS.BIRTHDAY, value: user.birthday || 'Not provided' },
+      { label: ONBOARDING_LABELS.DEVOTIONAL_EXPERIENCE, value: user.devotional_experience || 'Not provided' },
+      { label: ONBOARDING_LABELS.SPIRITUAL_JOURNEY, value: user.spiritual_journey || 'Not provided' },
+      { label: ONBOARDING_LABELS.LIFE_CHALLENGES, value: user.life_challenges?.join(', ') || 'Not provided' },
+      { label: ONBOARDING_LABELS.CURRENT_EMOTIONAL_STATE, value: user.current_emotional_state || 'Not provided' },
+      { label: ONBOARDING_LABELS.PREFERRED_THEMES, value: user.preferred_themes?.join(', ') || 'Not provided' },
+      { label: ONBOARDING_LABELS.DEVOTIONAL_GOALS, value: user.devotional_goals?.join(', ') || 'Not provided' },
+      { label: ONBOARDING_LABELS.STYLE_REVERENT_CONVERSATIONAL, value: user.style_reverent_conversational ? `${user.style_reverent_conversational}/10` : 'Not provided' },
+      { label: ONBOARDING_LABELS.STYLE_COMFORTING_CHALLENGING, value: user.style_comforting_challenging ? `${user.style_comforting_challenging}/10` : 'Not provided' },
+      { label: ONBOARDING_LABELS.STYLE_POETIC_PRACTICAL, value: user.style_poetic_practical ? `${user.style_poetic_practical}/10` : 'Not provided' },
+      { label: ONBOARDING_LABELS.STYLE_TRADITIONAL_MODERN, value: user.style_traditional_modern ? `${user.style_traditional_modern}/10` : 'Not provided' },
+      { label: ONBOARDING_LABELS.PREFERRED_TIME, value: user.preferred_time || 'Not provided' },
+      { label: ONBOARDING_LABELS.ADDITIONAL_NOTES, value: user.additional_notes || 'Not provided' },
     ];
-
-    return data;
-  };
-
-  const onboardingData = formatOnboardingData();
+  }, [user]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -120,38 +137,9 @@ export default function DashboardScreen() {
 
       {/* Status Cards Section */}
       <View style={styles.statusSection}>
-        {/* Authentication Status */}
-        <View style={[styles.statusCard, { backgroundColor: colors.grey }]}>
-          <Text style={[styles.statusCardTitle, { color: colors.textPrimary }]}>
-            Authentication Status
-          </Text>
-          <View style={styles.statusContent}>
-            <Text style={[styles.statusText, { color: colors.textSecondary }]}>
-              User ID: {user?.id || 'Not available'}
-            </Text>
-            <Text style={[styles.statusText, { color: colors.textSecondary }]}>
-              Email: {user?.email || 'Not available'}
-            </Text>
-            <Text style={[styles.statusText, { color: colors.textSecondary }]}>
-              Signed in: {user ? 'Yes' : 'No'}
-            </Text>
-          </View>
-        </View>
 
-        {/* Flow Completion Status */}
-        <View style={[styles.statusCard, { backgroundColor: colors.grey }]}>
-          <Text style={[styles.statusCardTitle, { color: colors.textPrimary }]}>
-            Flow Completion Status
-          </Text>
-          <View style={styles.statusContent}>
-            <Text style={[styles.statusText, { color: colors.textSecondary }]}>
-              Onboarding: {userFlowState.hasCompletedOnboarding ? '✅ Complete' : '❌ Incomplete'}
-            </Text>
-            <Text style={[styles.statusText, { color: colors.textSecondary }]}>
-              Payment: {userFlowState.hasPaidThroughSuperwall ? '✅ Complete' : '❌ Incomplete'}
-            </Text>
-          </View>
-        </View>
+
+
 
         {/* Onboarding Data Section */}
         {onboardingData && (
@@ -159,20 +147,22 @@ export default function DashboardScreen() {
             <Text style={[styles.statusCardTitle, { color: colors.textPrimary }]}>
               Onboarding Data (From Database)
             </Text>
-            <ScrollView style={styles.onboardingDataScroll} showsVerticalScrollIndicator={false}>
-              <View style={styles.statusContent}>
-                {onboardingData.map((item, index) => (
-                  <View key={index} style={styles.dataRow}>
-                    <Text style={[styles.dataLabel, { color: colors.textPrimary }]}>
-                      {item.label}:
-                    </Text>
-                    <Text style={[styles.dataValue, { color: colors.textSecondary }]}>
-                      {item.value}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            </ScrollView>
+            <FlatList
+              data={onboardingData}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.dataRow}>
+                  <Text style={[styles.dataLabel, { color: colors.textPrimary }]}>
+                    {item.label}:
+                  </Text>
+                  <Text style={[styles.dataValue, { color: colors.textSecondary }]}>
+                    {item.value}
+                  </Text>
+                </View>
+              )}
+              showsVerticalScrollIndicator={false}
+              style={styles.onboardingDataScroll}
+            />
           </View>
         )}
       </View>

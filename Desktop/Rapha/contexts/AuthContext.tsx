@@ -112,12 +112,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     hasCompletedOnboarding: false,
   });
 
-  // Debug: Monitor user state changes
+  // Debug: Monitor user state changes (only in development)
   useEffect(() => {
-    console.log('👤 AuthContext: User state changed:', { 
-      user: user ? { id: user.id, email: user.email } : null,
-      isAuthenticated: !!user 
-    });
+    if (__DEV__) {
+      console.log('👤 AuthContext: User state changed:', { 
+        user: user ? { id: user.id, email: user.email } : null,
+        isAuthenticated: !!user 
+      });
+    }
   }, [user]);
 
   // Load persisted user data from local storage on startup
@@ -224,7 +226,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 updated_at: session.user.updated_at!,
               }, {
                 hasCompletedOnboarding: false,
-                hasPaidThroughSuperwall: false,
+                
               });
               setUser(defaultUser);
               // Don't persist default user yet - wait for onboarding completion
@@ -239,7 +241,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               updated_at: session.user.updated_at!,
             }, {
               hasCompletedOnboarding: false,
-              hasPaidThroughSuperwall: false,
+              
             });
             setUser(defaultUser);
             // Don't persist default user yet - wait for onboarding completion
@@ -249,7 +251,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(null);
           setUserFlowState({
             hasCompletedOnboarding: false,
-            hasPaidThroughSuperwall: false,
+            
           });
           // Clear all local data
           await clearLocalData();
@@ -285,7 +287,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               console.log('✅ AuthContext: Profile loaded from Supabase on startup');
               const appProfile = convertDatabaseProfileToAppProfile(profile, {
                 hasCompletedOnboarding: false,
-                hasPaidThroughSuperwall: false,
+                
               });
               // Update email from auth user
               appProfile.email = session.user.email!;
@@ -294,7 +296,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               // Persist to local storage with current flow state
               await persistUserData(appProfile, {
                 hasCompletedOnboarding: false,
-                hasPaidThroughSuperwall: false,
+                
               });
             } else {
               console.log('⚠️ AuthContext: No profile found, creating default user');
@@ -305,7 +307,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 updated_at: session.user.updated_at!,
               }, {
                 hasCompletedOnboarding: false,
-                hasPaidThroughSuperwall: false,
+                
               });
               setUser(defaultUser);
             }
@@ -319,7 +321,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               updated_at: session.user.updated_at!,
             }, {
               hasCompletedOnboarding: false,
-              hasPaidThroughSuperwall: false,
+              
             });
             setUser(defaultUser);
           }
@@ -385,7 +387,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(null);
         setUserFlowState({
           hasCompletedOnboarding: false,
-          hasPaidThroughSuperwall: false,
+          
         });
         // Clear all local data
         await clearLocalData();
