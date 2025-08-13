@@ -18,8 +18,7 @@ interface AuthContextType {
   setUser: (user: UserProfile | null) => void;
   updateUserFlowState: (updates: Partial<UserFlowState>) => void;
   markOnboardingComplete: () => void;
-  resetFlowStates: () => void;
-  forceClearAuth: () => Promise<void>;
+
 }
 
 /**
@@ -441,42 +440,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   /**
    * Reset all flow states (for testing purposes)
    */
-  const resetFlowStates = () => {
-    setUserFlowState({
-      hasCompletedOnboarding: false,
-      hasPaidThroughSuperwall: false,
-    });
-    // Clear local data
-    clearLocalData();
-    console.log('📱 AuthContext: Flow states reset and local data cleared');
-  };
 
-  /**
-   * Force clear all authentication state and go back to splash screen
-   * This is useful for development/testing or when you want to start fresh
-   */
-  const forceClearAuth = async () => {
-    try {
-      console.log('🧹 AuthContext: Force clearing all authentication state...');
-      
-      // Sign out from Supabase
-      await supabase.auth.signOut();
-      
-      // Clear local state
-      setUser(null);
-      setUserFlowState({
-        hasCompletedOnboarding: false,
-        hasPaidThroughSuperwall: false,
-      });
-      
-      // Clear all local data
-      await clearLocalData();
-      
-      console.log('🧹 AuthContext: Authentication state cleared successfully');
-    } catch (error) {
-      console.error('🧹 AuthContext: Error clearing auth state:', error);
-    }
-  };
+
+
 
   const value: AuthContextType = {
     user,
@@ -488,8 +454,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser,
     updateUserFlowState,
     markOnboardingComplete,
-    resetFlowStates,
-    forceClearAuth,
   };
 
   return (
