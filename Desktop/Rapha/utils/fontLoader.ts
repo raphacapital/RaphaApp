@@ -1,11 +1,5 @@
-import * as Font from 'expo-font';
-
+// Fonts are automatically loaded by Expo when declared in app.json
 export const loadFonts = async () => {
-  await Font.loadAsync({
-    'NeueHaasDisplayRoman': require('./assets/fonts/NeueHaasDisplayRoman.ttf'),
-    'NeueHaasDisplayMediu': require('./assets/fonts/NeueHaasDisplayMediu.ttf'),
-    'NeueHaasDisplayBold': require('./assets/fonts/NeueHaasDisplayBold.ttf'),
-    'NeueHaasDisplayLight': require('./assets/fonts/NeueHaasDisplayLight.ttf'),
-    'NeueHaasDisplayThin': require('./assets/fonts/NeueHaasDisplayThin.ttf'),
-  });
+  // No manual loading needed - fonts are handled by Expo
+  return Promise.resolve();
 };
