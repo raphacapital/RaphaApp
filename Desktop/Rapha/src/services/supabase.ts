@@ -28,7 +28,7 @@ export interface UserProfile {
   devotional_experience?: string;
   spiritual_journey?: string;
   life_challenges?: string[];
-  current_emotional_state?: string[];
+  current_emotional_state?: string;
   preferred_themes?: string[];
   devotional_goals?: string[];
   style_reverent_conversational?: number;

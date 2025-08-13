@@ -53,6 +53,22 @@ const convertDatabaseProfileToAppProfile = (
     updated_at: dbProfile.updated_at || new Date().toISOString(),
     hasCompletedOnboarding: flowState.hasCompletedOnboarding,
     hasPaidThroughSuperwall: flowState.hasPaidThroughSuperwall,
+    // Map all onboarding fields
+    full_name: dbProfile.full_name,
+    gender: dbProfile.gender,
+    birthday: dbProfile.birthday,
+    devotional_experience: dbProfile.devotional_experience,
+    spiritual_journey: dbProfile.spiritual_journey,
+    life_challenges: dbProfile.life_challenges,
+    current_emotional_state: dbProfile.current_emotional_state,
+    preferred_themes: dbProfile.preferred_themes,
+    devotional_goals: dbProfile.devotional_goals,
+    style_reverent_conversational: dbProfile.style_reverent_conversational,
+    style_comforting_challenging: dbProfile.style_comforting_challenging,
+    style_poetic_practical: dbProfile.style_poetic_practical,
+    style_traditional_modern: dbProfile.style_traditional_modern,
+    preferred_time: dbProfile.preferred_time,
+    additional_notes: dbProfile.additional_notes,
   };
 };
 
@@ -70,6 +86,22 @@ const createAppProfileFromAuthUser = (
     updated_at: authUser.updated_at,
     hasCompletedOnboarding: flowState.hasCompletedOnboarding,
     hasPaidThroughSuperwall: flowState.hasPaidThroughSuperwall,
+    // Initialize onboarding fields as undefined for new users
+    full_name: undefined,
+    gender: undefined,
+    birthday: undefined,
+    devotional_experience: undefined,
+    spiritual_journey: undefined,
+    life_challenges: undefined,
+    current_emotional_state: undefined,
+    preferred_themes: undefined,
+    devotional_goals: undefined,
+    style_reverent_conversational: undefined,
+    style_comforting_challenging: undefined,
+    style_poetic_practical: undefined,
+    style_traditional_modern: undefined,
+    preferred_time: undefined,
+    additional_notes: undefined,
   };
 };
 

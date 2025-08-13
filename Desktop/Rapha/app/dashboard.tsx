@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../contexts/ThemeContext';
@@ -68,6 +68,33 @@ export default function DashboardScreen() {
     }
   };
 
+  // Helper function to format onboarding data
+  const formatOnboardingData = () => {
+    if (!user) return null;
+
+    const data = [
+      { label: 'Full Name', value: user.full_name || 'Not provided' },
+      { label: 'Gender', value: user.gender || 'Not provided' },
+      { label: 'Birthday', value: user.birthday || 'Not provided' },
+      { label: 'Devotional Experience', value: user.devotional_experience || 'Not provided' },
+      { label: 'Spiritual Journey', value: user.spiritual_journey || 'Not provided' },
+      { label: 'Life Challenges', value: user.life_challenges?.join(', ') || 'Not provided' },
+      { label: 'Current Emotional State', value: user.current_emotional_state || 'Not provided' },
+      { label: 'Preferred Themes', value: user.preferred_themes?.join(', ') || 'Not provided' },
+      { label: 'Devotional Goals', value: user.devotional_goals?.join(', ') || 'Not provided' },
+      { label: 'Style: Reverent vs Conversational', value: user.style_reverent_conversational ? `${user.style_reverent_conversational}/10` : 'Not provided' },
+      { label: 'Style: Comforting vs Challenging', value: user.style_comforting_challenging ? `${user.style_comforting_challenging}/10` : 'Not provided' },
+      { label: 'Style: Poetic vs Practical', value: user.style_poetic_practical ? `${user.style_poetic_practical}/10` : 'Not provided' },
+      { label: 'Style: Traditional vs Modern', value: user.style_traditional_modern ? `${user.style_traditional_modern}/10` : 'Not provided' },
+      { label: 'Preferred Time', value: user.preferred_time || 'Not provided' },
+      { label: 'Additional Notes', value: user.additional_notes || 'Not provided' },
+    ];
+
+    return data;
+  };
+
+  const onboardingData = formatOnboardingData();
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header Section */}
@@ -125,6 +152,29 @@ export default function DashboardScreen() {
             </Text>
           </View>
         </View>
+
+        {/* Onboarding Data Section */}
+        {onboardingData && (
+          <View style={[styles.statusCard, { backgroundColor: colors.grey }]}>
+            <Text style={[styles.statusCardTitle, { color: colors.textPrimary }]}>
+              Onboarding Data (From Database)
+            </Text>
+            <ScrollView style={styles.onboardingDataScroll} showsVerticalScrollIndicator={false}>
+              <View style={styles.statusContent}>
+                {onboardingData.map((item, index) => (
+                  <View key={index} style={styles.dataRow}>
+                    <Text style={[styles.dataLabel, { color: colors.textPrimary }]}>
+                      {item.label}:
+                    </Text>
+                    <Text style={[styles.dataValue, { color: colors.textSecondary }]}>
+                      {item.value}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        )}
       </View>
 
       {/* Sign Out Button */}
@@ -194,6 +244,27 @@ const styles = StyleSheet.create({
   },
   statusText: {
     ...getTypography('text', 'regular'),
+  },
+  onboardingDataScroll: {
+    maxHeight: 300,
+  },
+  dataRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: SPACING.sm,
+    paddingVertical: SPACING.xs,
+  },
+  dataLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    flex: 1,
+    marginRight: SPACING.sm,
+  },
+  dataValue: {
+    fontSize: 14,
+    flex: 2,
+    textAlign: 'right',
   },
   
   // Sign Out Section
