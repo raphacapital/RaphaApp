@@ -497,8 +497,14 @@ export default function OnboardingScreen10() {
             </View>
           </View>
 
-          {/* Empty space for balance (no skip button) */}
-          <View style={styles.placeholderButton} />
+          {/* Skip Button */}
+          <TouchableOpacity
+            style={[styles.skipButton, { backgroundColor: colors.grey }]}
+            activeOpacity={0.8}
+            onPress={() => router.push('/onboarding/onboarding11')}
+          >
+            <Text style={[styles.skipButtonText, { color: colors.textPrimary }]}>Skip</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Main Content Area */}
@@ -657,9 +663,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  placeholderButton: {
+  skipButton: {
     width: 64,
     height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  skipButtonText: {
+    fontSize: 16,
+    lineHeight: 20.8,
+    letterSpacing: 0,
+    fontFamily: 'NeueHaasDisplay-Medium',
+    fontWeight: '600',
   },
   backButtonText: {
     fontSize: 16,
