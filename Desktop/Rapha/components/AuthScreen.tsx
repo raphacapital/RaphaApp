@@ -84,11 +84,12 @@ const AuthScreen: React.FC<AuthScreenProps> = ({
           console.log('🆕 AuthScreen: New user detected, redirecting to onboarding');
           router.replace('/onboarding/onboarding1');
         } else {
-          // Existing user - mark onboarding complete and go to dashboard
+          // Existing user - mark onboarding complete and go to post-auth route
           console.log('👤 AuthScreen: Existing user, marking onboarding complete');
           markOnboardingComplete();
           onAuthSuccess({ success: true });
-          router.replace('/');
+          // Navigate to post-auth route for proper routing
+          router.replace('/post-auth');
         }
       }
     } catch (error: any) {

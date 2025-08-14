@@ -6,40 +6,39 @@ import { useTheme } from '../contexts/ThemeContext';
 import { getColors } from '../constants/theme';
 
 /**
- * FlowRouter - Handles all routing logic based on user flow completion status
- * Implements the exact routing flow from the flowchart
+ * Post-authentication route that handles routing for authenticated users
+ * This route is only accessible after successful authentication
  */
-export default function FlowRouter() {
+export default function PostAuthRoute() {
   const router = useRouter();
   const { user, isAuthenticated, userFlowState } = useAuth();
   const { theme } = useTheme();
   const colors = getColors(theme);
 
   useEffect(() => {
-    console.log('🔀 FlowRouter: Evaluating routing logic...', {
+    console.log('🔀 PostAuth: Evaluating routing logic...', {
       isAuthenticated,
       hasUser: !!user,
       flowState: userFlowState,
       hasCompletedOnboarding: userFlowState.hasCompletedOnboarding,
-      hasPaidThroughSuperwall: userFlowState.hasPaidThroughSuperwall
     });
 
     // If not authenticated, go to splash screen
     if (!isAuthenticated || !user) {
-      console.log('❌ FlowRouter: User not authenticated, going to splash screen');
+      console.log('❌ PostAuth: User not authenticated, going to splash screen');
       router.replace('/splashscreen');
       return;
     }
 
     // User is authenticated, check if they need to complete onboarding
     if (!userFlowState.hasCompletedOnboarding) {
-      console.log('🆕 FlowRouter: User needs to complete onboarding, going to onboarding');
+      console.log('🆕 PostAuth: User needs to complete onboarding, going to onboarding');
       router.replace('/onboarding/onboarding1');
       return;
     }
 
     // User is authenticated and has completed onboarding, take them to dashboard
-    console.log('✅ FlowRouter: User authenticated and onboarding complete, going to dashboard');
+    console.log('✅ PostAuth: User authenticated and onboarding complete, going to dashboard');
     router.replace('/dashboard');
   }, [isAuthenticated, user, userFlowState, router]);
 
