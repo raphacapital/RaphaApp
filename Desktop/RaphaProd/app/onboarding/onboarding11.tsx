@@ -83,14 +83,14 @@ export default function OnboardingScreen11() {
     console.log('onboardingData:', onboardingData);
     console.log('additionalNotes:', additionalNotes);
 
-    // Navigate to auth screen with all onboarding data
+    // Navigate to onboarding12 with all onboarding data
     const finalOnboardingData = {
       ...onboardingData,
       additional_notes: additionalNotes,
     };
 
     router.push({
-      pathname: '/auth',
+      pathname: '/onboarding/onboarding12',
       params: {
         gender: finalOnboardingData.gender,
         birthday: finalOnboardingData.birthday,
