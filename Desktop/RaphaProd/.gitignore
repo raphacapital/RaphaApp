@@ -76,6 +76,9 @@ Desktop.ini
 ../../.app-store/
 ../../.cache/
 ../../.cisco/
+../../.claude.json
+../../.claude.json.backup
+../../.claude/
 ../../.cocoapods/
 ../../.config/
 ../../.cups/
@@ -100,6 +103,10 @@ Desktop.ini
 ../../.viminfo
 ../../.vpn/
 ../../.vscode/
+../../.zcompdump
+../../.zsh_history
+../../.zsh_sessions/
+../../.zshrc
 ../../Applications/
 ../../Documents/
 ../../Downloads/
