@@ -32,11 +32,11 @@ export default function OnboardingScreen4() {
   // Spiritual journey state
   const [selectedJourney, setSelectedJourney] = useState<string | null>(null);
 
-  // Progress calculation - start from where onboarding3 finished (60%)
+  // Progress calculation - start from where onboarding3 finished (27.27%)
   const currentScreen = 4;
-  const totalScreens = 12;
+  const totalScreens = 11;
   const progressPercentage = (currentScreen / totalScreens) * 100;
-  const startingProgress = 25; // onboarding3 finished at 25% (3/12)
+  const startingProgress = 27.27; // onboarding3 finished at 27.27% (3/11)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));
@@ -46,12 +46,12 @@ export default function OnboardingScreen4() {
   const [matureAnimation] = useState(new Animated.Value(0));
   const [stuckAnimation] = useState(new Animated.Value(0));
 
-  // Animate progress on mount - start from 75% and animate to 100%
+  // Animate progress on mount - start from 27.27% and animate to 36.36%
   useEffect(() => {
-    // Set initial value to 75%
+    // Set initial value to 27.27%
     progressAnimation.setValue(startingProgress);
     
-    // Animate to 100%
+    // Animate to 36.36%
     Animated.timing(progressAnimation, {
       toValue: progressPercentage,
       duration: 600,

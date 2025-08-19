@@ -38,11 +38,11 @@ export default function OnboardingScreen7() {
   // Theme state - multi-select
   const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
 
-  // Progress calculation - start from where onboarding6 finished (50% of 12 screens)
+  // Progress calculation - start from where onboarding6 finished (54.55%)
   const currentScreen = 7;
-  const totalScreens = 12;
+  const totalScreens = 11;
   const progressPercentage = (currentScreen / totalScreens) * 100;
-  const startingProgress = 50; // onboarding6 finished at 50% (6/12)
+  const startingProgress = 54.55; // onboarding6 finished at 54.55% (6/11)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));
@@ -57,12 +57,12 @@ export default function OnboardingScreen7() {
   const [surrenderAnimation] = useState(new Animated.Value(0));
   const [courageAnimation] = useState(new Animated.Value(0));
 
-  // Animate progress on mount - start from 66.67% and animate to 77.78%
+  // Animate progress on mount - start from 54.55% and animate to 63.64%
   useEffect(() => {
-    // Set initial value to 66.67%
+    // Set initial value to 54.55%
     progressAnimation.setValue(startingProgress);
     
-    // Animate to 77.78%
+    // Animate to 63.64%
     Animated.timing(progressAnimation, {
       toValue: progressPercentage,
       duration: 600,

@@ -47,21 +47,21 @@ export default function OnboardingScreen9() {
     style_traditional_modern: 0.5,       // 50% = 0.5
   });
 
-  // Progress calculation - start from where onboarding8 finished (66.67% of 12 screens)
+  // Progress calculation - start from where onboarding8 finished (72.73%)
   const currentScreen = 9;
-  const totalScreens = 12;
+  const totalScreens = 11;
   const progressPercentage = (currentScreen / totalScreens) * 100;
-  const startingProgress = 66.67; // onboarding8 finished at 66.67% (8/12)
+  const startingProgress = 72.73; // onboarding8 finished at 72.73% (8/11)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));
 
-  // Animate progress on mount - start from 88.89% and animate to 100%
+  // Animate progress on mount - start from 72.73% and animate to 81.82%
   useEffect(() => {
-    // Set initial value to 88.89%
+    // Set initial value to 72.73%
     progressAnimation.setValue(startingProgress);
     
-    // Animate to 100%
+    // Animate to 81.82%
     Animated.timing(progressAnimation, {
       toValue: progressPercentage,
       duration: 600,

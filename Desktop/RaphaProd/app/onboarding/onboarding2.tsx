@@ -29,21 +29,21 @@ export default function OnboardingScreen2() {
   // Birthday state
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   
-  // Progress calculation - start from where onboarding1 finished (20%)
+  // Progress calculation - start from where onboarding1 finished (9.09%)
   const currentScreen = 2;
-  const totalScreens = 12;
+  const totalScreens = 11;
   const progressPercentage = (currentScreen / totalScreens) * 100;
-  const startingProgress = 8.33; // onboarding1 finished at 8.33% (1/12)
+  const startingProgress = 9.09; // onboarding1 finished at 9.09% (1/11)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));
 
-  // Animate progress on mount - start from 50% and animate to 100%
+  // Animate progress on mount - start from 9.09% and animate to 18.18%
   useEffect(() => {
-    // Set initial value to 50%
+    // Set initial value to 9.09%
     progressAnimation.setValue(startingProgress);
     
-    // Animate to 100%
+    // Animate to 18.18%
     Animated.timing(progressAnimation, {
       toValue: progressPercentage,
       duration: 600,

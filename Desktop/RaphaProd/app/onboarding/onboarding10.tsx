@@ -72,11 +72,11 @@ export default function OnboardingScreen10() {
     night: new Date(2024, 0, 1, 21, 0, 0), // 9:00 PM
   });
 
-  // Progress calculation - start from where onboarding9 finished (75% of 12 screens)
+  // Progress calculation - start from where onboarding9 finished (81.82%)
   const currentScreen = 10;
-  const totalScreens = 12;
+  const totalScreens = 11;
   const progressPercentage = (currentScreen / totalScreens) * 100;
-  const startingProgress = 75; // onboarding9 finished at 75% (9/12)
+  const startingProgress = 81.82; // onboarding9 finished at 81.82% (9/11)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));
@@ -91,12 +91,12 @@ export default function OnboardingScreen10() {
   const [afternoonExpansion] = useState(new Animated.Value(0));
   const [nightExpansion] = useState(new Animated.Value(0));
 
-  // Animate progress on mount - start from 90% and animate to 100%
+  // Animate progress on mount - start from 81.82% and animate to 90.91%
   useEffect(() => {
-    // Set initial value to 90%
+    // Set initial value to 81.82%
     progressAnimation.setValue(startingProgress);
     
-    // Animate to 100%
+    // Animate to 90.91%
     Animated.timing(progressAnimation, {
       toValue: progressPercentage,
       duration: 600,

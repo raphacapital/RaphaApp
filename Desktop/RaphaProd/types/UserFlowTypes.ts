@@ -20,14 +20,15 @@ export interface UserProfile extends UserFlowState {
   devotional_experience?: string;
   spiritual_journey?: string;
   life_challenges?: string[];
-  current_emotional_state?: string;
+  current_emotional_state?: string[];
   preferred_themes?: string[];
   devotional_goals?: string[];
   style_reverent_conversational?: number;
   style_comforting_challenging?: number;
   style_poetic_practical?: number;
   style_traditional_modern?: number;
-  preferred_time?: string;
+  preferred_time?: string[]; // Array of selected time slots (e.g., ["morning", "afternoon"])
+  devotional_times?: {[key: string]: string}; // Specific times in 24-hour format (e.g., {"morning": "09:00"})
   additional_notes?: string;
 }
 

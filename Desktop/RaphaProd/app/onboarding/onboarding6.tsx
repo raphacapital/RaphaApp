@@ -36,11 +36,11 @@ export default function OnboardingScreen6() {
   // Emotional state state - multi-select
   const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
 
-  // Progress calculation - start from where onboarding5 finished (41.67% of 12 screens)
+  // Progress calculation - start from where onboarding5 finished (45.45%)
   const currentScreen = 6;
-  const totalScreens = 12;
+  const totalScreens = 11;
   const progressPercentage = (currentScreen / totalScreens) * 100;
-  const startingProgress = 41.67; // onboarding5 finished at 41.67% (5/12)
+  const startingProgress = 45.45; // onboarding5 finished at 45.45% (5/11)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));
@@ -55,12 +55,12 @@ export default function OnboardingScreen6() {
   const [contentAnimation] = useState(new Animated.Value(0));
   const [uncertainAnimation] = useState(new Animated.Value(0));
 
-  // Animate progress on mount - start from 83.33% and animate to 100%
+  // Animate progress on mount - start from 45.45% and animate to 54.55%
   useEffect(() => {
-    // Set initial value to 83.33%
+    // Set initial value to 45.45%
     progressAnimation.setValue(startingProgress);
     
-    // Animate to 100%
+    // Animate to 54.55%
     Animated.timing(progressAnimation, {
       toValue: progressPercentage,
       duration: 600,

@@ -21,7 +21,7 @@ export default function OnboardingScreen1() {
   
   // Progress calculation
   const currentScreen = 1;
-  const totalScreens = 12;
+  const totalScreens = 11;
   const progressPercentage = (currentScreen / totalScreens) * 100;
 
   // Animation setup using React Native Animated

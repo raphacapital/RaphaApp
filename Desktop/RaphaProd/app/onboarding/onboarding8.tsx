@@ -40,11 +40,11 @@ export default function OnboardingScreen8() {
   // Devotional goals state - multi-select
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
 
-  // Progress calculation - start from where onboarding7 finished (58.33% of 12 screens)
+  // Progress calculation - start from where onboarding7 finished (63.64%)
   const currentScreen = 8;
-  const totalScreens = 12;
+  const totalScreens = 11;
   const progressPercentage = (currentScreen / totalScreens) * 100;
-  const startingProgress = 58.33; // onboarding7 finished at 58.33% (7/12)
+  const startingProgress = 63.64; // onboarding7 finished at 63.64% (7/11)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));
@@ -54,12 +54,12 @@ export default function OnboardingScreen8() {
   const [scriptureAnimation] = useState(new Animated.Value(0));
   const [habitAnimation] = useState(new Animated.Value(0));
 
-  // Animate progress on mount - start from 77.78% and animate to 88.89%
+  // Animate progress on mount - start from 63.64% and animate to 72.73%
   useEffect(() => {
-    // Set initial value to 77.78%
+    // Set initial value to 63.64%
     progressAnimation.setValue(startingProgress);
     
-    // Animate to 88.89%
+    // Animate to 72.73%
     Animated.timing(progressAnimation, {
       toValue: progressPercentage,
       duration: 600,

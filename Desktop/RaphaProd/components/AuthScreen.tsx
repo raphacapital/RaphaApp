@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Alert, ActivityIndicator, TouchableOpacity } fr
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import { SymbolView } from 'expo-symbols';
 import { useAuth } from '../contexts/AuthContext';
 import { UserProfile } from '../services/supabase';
 import CTAButton from './CTAButton';
@@ -140,16 +141,68 @@ const AuthScreen: React.FC<AuthScreenProps> = ({
           marginHorizontal: SPACING.lg,
         }
       ]}>
+        {/* Top Navigation Bar - Visible with back button and progress bar */}
+        <View style={styles.topBar}>
+          {/* Back Button - Visible */}
+          <TouchableOpacity
+            style={[styles.backButton, { backgroundColor: colors.grey }]}
+            activeOpacity={0.8}
+            onPress={() => router.back()}
+          >
+            <Text style={[styles.backButtonText, { color: colors.textPrimary }]}>←</Text>
+          </TouchableOpacity>
 
+          {/* Progress Bar Container - Visible */}
+          <View style={styles.progressBarContainer}>
+            <View style={[styles.progressBar, { backgroundColor: colors.grey }]}>
+              <View style={[styles.progressFill, { 
+                backgroundColor: colors.buttonBackground,
+                width: '100%'
+              }]} />
+            </View>
+          </View>
+
+          {/* Skip Button - Hidden */}
+          <TouchableOpacity
+            style={[styles.skipButton, { backgroundColor: colors.grey, opacity: 0 }]}
+            activeOpacity={0.8}
+            onPress={() => {}}
+          >
+            <Text style={[styles.skipButtonText, { color: colors.textPrimary }]}>Skip</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Main Content Area */}
         <View style={styles.mainContentContainer}>
           {/* Question */}
           <View style={styles.questionContainer}>
-            <Text style={[styles.questionText, { color: colors.textPrimary }]}>Complete Your Profile</Text>
-            <Text style={[styles.descriptionText, { color: theme === 'dark' ? 'white' : 'black' }]}>Sign up to begin your spiritual journey</Text>
+            <Text style={[styles.questionText, { color: colors.textPrimary }]}>Sign up to complete{'\n'}your profile.</Text>
           </View>
 
+        </View>
+
+        {/* SF Symbol and Box Container - positioned above Apple Sign In button */}
+        <View style={styles.symbolAndBoxContainer}>
+          {/* Box */}
+          <View style={[styles.box, { backgroundColor: colors.grey }]}>
+            {/* SF Symbol - positioned at top of box */}
+            <View style={styles.symbolOverlay}>
+              <SymbolView 
+                name="shield.pattern.checkered" 
+                style={styles.symbol} 
+                size={36}
+                tintColor={colors.textPrimary}
+              />
+            </View>
+            
+            {/* Privacy Text */}
+            <View style={styles.privacyTextContainer}>
+              <Text style={[styles.boxPrivacyText, { color: colors.textPrimary }]}>
+                Your privacy and security matter to us.{'\n'}
+                We promise to keep your information private and secure.
+              </Text>
+            </View>
+          </View>
         </View>
 
         {/* Apple Sign In Button */}
@@ -208,7 +261,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'center',
-    marginTop: SPACING.xl,
+    marginTop: 'auto', // Push button to bottom of content container (same as onboarding12)
     width: '100%',
   },
   appleButton: {
@@ -230,7 +283,99 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
 
-
+  symbolAndBoxContainer: {
+    alignItems: 'center',
+    marginBottom: SPACING.lg, // 24px above Apple Sign In button (same as onboarding12)
+    width: '100%',
+  },
+  box: {
+    height: 126,
+    width: '100%',
+    borderRadius: 10,
+    position: 'relative',
+  },
+  symbolOverlay: {
+    position: 'absolute',
+    top: -18, // Position symbol so it's flush with top edge of box (36/2 = 18)
+    left: '50%',
+    marginLeft: -18, // Half of symbol width (36/2)
+    zIndex: 10,
+  },
+  symbol: {
+    height: 36,
+    width: 36,
+  },
+  privacyTextContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.lg,
+  },
+  boxPrivacyText: {
+    fontSize: 18,
+    lineHeight: 18, // 100% line height
+    fontFamily: 'NeueHaasDisplayMediu', // Medium weight
+    textAlign: 'center',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: SPACING.md,
+    fontSize: 16,
+    color: '#007AFF',
+  },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    zIndex: 10,
+  },
+  backButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  skipButton: {
+    width: 64,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  skipButtonText: {
+    fontSize: 16,
+    lineHeight: 20.8,
+    letterSpacing: 0,
+    fontFamily: 'NeueHaasDisplay-Medium',
+    fontWeight: '600',
+  },
+  backButtonText: {
+    fontSize: 16,
+    lineHeight: 20.8,
+    letterSpacing: 0,
+    fontFamily: 'System',
+    fontWeight: '600',
+  },
+  progressBarContainer: {
+    flex: 1,
+    marginHorizontal: SPACING.sm, // 12px on each side
+    alignItems: 'center',
+  },
+  progressBar: {
+    height: 6,
+    borderRadius: 3,
+    width: '100%', // Use full width of container
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
 });
 
 export default AuthScreen;

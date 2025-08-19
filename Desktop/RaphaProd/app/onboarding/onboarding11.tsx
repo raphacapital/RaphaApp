@@ -56,11 +56,11 @@ export default function OnboardingScreen11() {
   // Additional notes state
   const [additionalNotes, setAdditionalNotes] = useState('');
 
-  // Progress calculation - start from where onboarding10 finished (83.33% of 12 screens)
+  // Progress calculation - start from where onboarding10 finished (90.91%)
   const currentScreen = 11;
-  const totalScreens = 12;
+  const totalScreens = 11;
   const progressPercentage = (currentScreen / totalScreens) * 100;
-  const startingProgress = 83.33; // onboarding10 finished at 83.33% (10/12)
+  const startingProgress = 90.91; // onboarding10 finished at 90.91% (10/11)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));
@@ -83,14 +83,14 @@ export default function OnboardingScreen11() {
     console.log('onboardingData:', onboardingData);
     console.log('additionalNotes:', additionalNotes);
 
-    // Navigate to onboarding12 with all onboarding data
+    // Navigate to auth with all onboarding data
     const finalOnboardingData = {
       ...onboardingData,
       additional_notes: additionalNotes,
     };
 
     router.push({
-      pathname: '/onboarding/onboarding12',
+      pathname: '/auth',
       params: {
         gender: finalOnboardingData.gender,
         birthday: finalOnboardingData.birthday,

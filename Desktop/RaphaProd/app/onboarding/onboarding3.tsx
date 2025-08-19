@@ -30,11 +30,11 @@ export default function OnboardingScreen3() {
   // Devotional experience state
   const [selectedExperience, setSelectedExperience] = useState<string | null>(null);
 
-  // Progress calculation - start from where onboarding2 finished (40%)
+  // Progress calculation - start from where onboarding2 finished (18.18%)
   const currentScreen = 3;
-  const totalScreens = 12;
+  const totalScreens = 11;
   const progressPercentage = (currentScreen / totalScreens) * 100;
-  const startingProgress = 16.67; // onboarding2 finished at 16.67% (2/12)
+  const startingProgress = 18.18; // onboarding2 finished at 18.18% (2/11)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));
@@ -44,12 +44,12 @@ export default function OnboardingScreen3() {
   const [dailyAnimation] = useState(new Animated.Value(0));
   const [multipleAnimation] = useState(new Animated.Value(0));
 
-  // Animate progress on mount - start from 66.67% and animate to 100%
+  // Animate progress on mount - start from 18.18% and animate to 27.27%
   useEffect(() => {
-    // Set initial value to 66.67%
+    // Set initial value to 18.18%
     progressAnimation.setValue(startingProgress);
     
-    // Animate to 100%
+    // Animate to 27.27%
     Animated.timing(progressAnimation, {
       toValue: progressPercentage,
       duration: 600,
