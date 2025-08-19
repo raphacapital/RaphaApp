@@ -56,11 +56,11 @@ export default function OnboardingScreen11() {
   // Additional notes state
   const [additionalNotes, setAdditionalNotes] = useState('');
 
-  // Progress calculation - start from where onboarding10 finished (100% of 11 screens)
+  // Progress calculation - start from where onboarding10 finished (83.33% of 12 screens)
   const currentScreen = 11;
-  const totalScreens = 11;
+  const totalScreens = 12;
   const progressPercentage = (currentScreen / totalScreens) * 100;
-  const startingProgress = 90.91; // onboarding10 finished at 90.91% of total 11 screens
+  const startingProgress = 83.33; // onboarding10 finished at 83.33% (10/12)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));

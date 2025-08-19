@@ -1,32 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '../../contexts/ThemeContext';
 import { getColors, SPACING, getTypography } from '../../constants/theme';
 import ContinueButton from '../../components/ContinueButton';
-import { SymbolView } from 'expo-symbols';
+import { UserProfile } from '../../services/supabase';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 /**
- * Onboarding Screen 12 - Thank you screen
+ * Onboarding Screen 2 - Birthday selection screen
  */
-export default function OnboardingScreen12() {
+export default function OnboardingScreen2() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams();
   const { theme } = useTheme();
   const colors = getColors(theme);
-
-  // Progress calculation - this is the final screen
-  const currentScreen = 12;
+  
+  // Get gender from previous screen
+  const gender = params.gender as string;
+  
+  // State to track onboarding data
+  const [onboardingData, setOnboardingData] = useState<Partial<UserProfile>>({
+    gender,
+  });
+  
+  // Birthday state
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  
+  // Progress calculation - start from where onboarding1 finished (20%)
+  const currentScreen = 2;
   const totalScreens = 12;
   const progressPercentage = (currentScreen / totalScreens) * 100;
+  const startingProgress = 8.33; // onboarding1 finished at 8.33% (1/12)
 
   // Animation setup using React Native Animated
   const [progressAnimation] = useState(new Animated.Value(0));
 
-  // Animate progress on mount
+  // Animate progress on mount - start from 50% and animate to 100%
   useEffect(() => {
+    // Set initial value to 50%
+    progressAnimation.setValue(startingProgress);
+    
+    // Animate to 100%
     Animated.timing(progressAnimation, {
       toValue: progressPercentage,
       duration: 600,
@@ -34,29 +51,43 @@ export default function OnboardingScreen12() {
     }).start();
   }, []);
 
-  const handleContinue = () => {
-    // Navigate to auth with all onboarding data
-    router.push({
-      pathname: '/auth',
-      params: {
-        gender: params.gender,
-        birthday: params.birthday,
-        devotional_experience: params.devotional_experience,
-        spiritual_journey: params.spiritual_journey,
-        life_challenges: params.life_challenges,
-        emotional_state: params.emotional_state,
-        preferred_themes: params.preferred_themes,
-        devotional_goals: params.devotional_goals,
-        style_reverent_conversational: params.style_reverent_conversational,
-        style_comforting_challenging: params.style_comforting_challenging,
-        style_poetic_practical: params.style_poetic_practical,
-        style_traditional_modern: params.style_traditional_modern,
-        preferred_time: params.preferred_time,
-        devotional_times: params.devotional_times,
-        additional_notes: params.additional_notes,
-      }
-    });
+
+
+  const handleDateSelect = (event: any, date?: Date) => {
+    if (date) {
+      console.log('Date selected:', date);
+      setSelectedDate(date);
+      
+      // Update onboarding data
+      setOnboardingData(prev => {
+        const newData = { ...prev, birthday: date.toISOString().split('T')[0] };
+        console.log('Updated onboardingData:', newData);
+        return newData;
+      });
+    }
   };
+
+    const handleContinue = () => {
+    console.log('Continue button pressed');
+    console.log('onboardingData:', onboardingData);
+    console.log('onboardingData.birthday:', onboardingData.birthday);
+
+    if (onboardingData.birthday) {
+      console.log('Navigating to onboarding3 screen');
+      // Navigate to onboarding3 screen with onboarding data as route params
+      router.push({
+        pathname: '/onboarding/onboarding3',
+        params: {
+          gender: onboardingData.gender,
+          birthday: onboardingData.birthday,
+        }
+      });
+    } else {
+      console.log('No date selected, cannot continue');
+    }
+  };
+
+  
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -97,7 +128,7 @@ export default function OnboardingScreen12() {
           <TouchableOpacity
             style={[styles.skipButton, { backgroundColor: colors.grey, opacity: 0 }]}
             activeOpacity={0.8}
-            onPress={() => router.push('/dashboard')}
+            onPress={() => router.push('/onboarding/onboarding3')}
           >
             <Text style={[styles.skipButtonText, { color: colors.textPrimary }]}>Skip</Text>
           </TouchableOpacity>
@@ -105,36 +136,25 @@ export default function OnboardingScreen12() {
 
         {/* Main Content Area */}
         <View style={styles.mainContentContainer}>
-          {/* Header */}
-          <View style={styles.headerContainer}>
-            <Text style={[styles.headerText, { color: colors.textPrimary }]}>
-              Thank you for{'\n'}choosing Rapha.
-            </Text>
+          {/* Question */}
+          <View style={styles.questionContainer}>
+            <Text style={[styles.questionText, { color: colors.textPrimary }]}>When's your birthday?</Text>
+            <Text style={[styles.descriptionText, { color: theme === 'dark' ? 'white' : 'black' }]}>This helps us personalize your experience.</Text>
           </View>
-        </View>
 
-        {/* SF Symbol and Box Container - positioned above continue button */}
-        <View style={styles.symbolAndBoxContainer}>
-          {/* Box */}
-          <View style={[styles.box, { backgroundColor: colors.grey }]}>
-            {/* SF Symbol - positioned at top of box */}
-            <View style={styles.symbolOverlay}>
-              <SymbolView 
-                name="shield.pattern.checkered" 
-                style={styles.symbol} 
-                size={36}
-                tintColor={colors.textPrimary}
-              />
-            </View>
-            
-            {/* Privacy Text */}
-            <View style={styles.privacyTextContainer}>
-              <Text style={[styles.privacyText, { color: colors.textPrimary }]}>
-                Your privacy and security matter to us.{'\n'}
-                We promise to keep your information private and secure.
-              </Text>
-            </View>
-          </View>
+                             {/* Date Selection Area */}
+                   <View style={styles.dateContainer}>
+                     {/* Date Picker */}
+                     <DateTimePicker
+                       value={selectedDate || new Date()}
+                       mode="date"
+                       display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                       onChange={handleDateSelect}
+                       maximumDate={new Date()}
+                       minimumDate={new Date(1900, 0, 1)}
+                       style={styles.datePicker}
+                     />
+                   </View>
         </View>
 
         {/* Continue Button */}
@@ -142,9 +162,12 @@ export default function OnboardingScreen12() {
           <ContinueButton
             title="Continue"
             onPress={handleContinue}
+            disabled={!onboardingData.birthday}
           />
         </View>
       </View>
+
+
     </View>
   );
 }
@@ -155,6 +178,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+    zIndex: 10,
   },
   topBar: {
     flexDirection: 'row',
@@ -165,50 +189,34 @@ const styles = StyleSheet.create({
   mainContentContainer: {
     flex: 1,
   },
-  headerContainer: {
+  questionContainer: {
     marginTop: SPACING.xl, // 36px below top content
     alignItems: 'center',
   },
-  symbolAndBoxContainer: {
-    alignItems: 'center',
-    marginBottom: SPACING.lg, // 24px above continue button
+  questionText: {
+    ...getTypography('h1', 'medium'),
+    textAlign: 'center',
   },
-  symbolOverlay: {
-    position: 'absolute',
-    top: -18, // Position symbol so it's flush with top edge of box (36/2 = 18)
-    left: '50%',
-    marginLeft: -18, // Half of symbol width (36/2)
-    zIndex: 10,
+  descriptionText: {
+    fontSize: 16,
+    lineHeight: 20.8,
+    letterSpacing: 0,
+    fontFamily: 'NeueHaasDisplayRoman',
+    textAlign: 'center',
+    marginTop: SPACING.sm, // 12px below the question
   },
-  symbol: {
-    height: 36,
-    width: 36,
-  },
-  box: {
-    height: 126,
-    width: '100%',
-    borderRadius: 10,
-    position: 'relative',
-  },
-  privacyTextContainer: {
+  dateContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: SPACING.lg,
   },
-  privacyText: {
-    fontSize: 18,
-    lineHeight: 18, // 100% line height
-    fontFamily: 'NeueHaasDisplayMediu', // Medium weight
-    textAlign: 'center',
-  },
-  headerText: {
-    ...getTypography('h1', 'medium'),
-    textAlign: 'center',
-  },
+
+
+
   buttonContainer: {
-    marginTop: 'auto', // Push button to bottom of content container
     alignItems: 'center',
+    marginTop: SPACING.xl,
     width: '100%',
   },
   backButton: {
@@ -254,4 +262,13 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 3,
   },
+
+
+
+  datePicker: {
+    width: '100%',
+    height: Platform.OS === 'ios' ? 200 : 50,
+    marginBottom: SPACING.lg,
+  },
+
 });

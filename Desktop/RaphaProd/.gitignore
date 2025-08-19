@@ -1,0 +1,119 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# Debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.log
+*.tmp
+*.temp
+
+# Build outputs
+build/
+dist/
+out/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# User specific files
+.claude.json
+.claude.json.backup
+.claude/
+.zsh_history
+.zsh_sessions/
+.zshrc
+.zcompdump
+
+# Desktop and system files
+../.DS_Store
+../.localized
+../Carbon/
+../Mccarren/
+../../.CFUserTextEncoding
+../../.DS_Store
+../../.RData
+../../.Rhistory
+../../.adobe/
+../../.app-store/
+../../.cache/
+../../.cisco/
+../../.cocoapods/
+../../.config/
+../../.cups/
+../../.cursor-tutor/
+../../.cursor/
+../../.expo/
+../../.gem/
+../../.gitconfig
+../../.gradle/
+../../.local/
+../../.m2/
+../../.mariadb_history
+../../.npm/
+../../.nvm/
+../../.pdfbox.cache
+../../.putty/
+../../.ssh/
+../../.swiftpm/
+../../.thinkorswim/
+../../.thumbnails/
+../../.vim/
+../../.viminfo
+../../.vpn/
+../../.vscode/
+../../Applications/
+../../Documents/
+../../Downloads/
+../../Library/
+../../Movies/
+../../Music/
+../../Pictures/
+../../Public/
+../../TestingPlayground/
+../../Unit_2.R
+../../local_html/
+../../mlx/
+../../node_modules/
+../../package-lock.json
+../../package.json
+../../public_html/
+../../thinkorswim/
